@@ -21,6 +21,9 @@ app.use(session({
   saveUninitialized: false
 }));
 
+// routes
+app.use("/api", require("./routes/auth.routes"));
+
 // route pour tester si la bd marche
 app.get("/api/test", async (req, res) => {
   try {
