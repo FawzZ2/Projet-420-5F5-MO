@@ -5,6 +5,50 @@ body {
   color: #2b2b2b;
 }
 
+/* barre du haut */
+.entete {
+  display: flex;
+  align-items: center;
+  gap: 24px;
+  flex-wrap: wrap;
+  padding: 14px 24px;
+  background: #2b2b2b;
+}
+.logo {
+  color: #f4f1ec;
+  font-size: 20px;
+  font-weight: bold;
+  text-decoration: none;
+}
+.entete nav {
+  display: flex;
+  gap: 18px;
+}
+.entete nav a {
+  color: #ccc;
+  text-decoration: none;
+  font-size: 15px;
+}
+.entete nav a:hover {
+  color: #b5651d;
+}
+.droite {
+  margin-left: auto;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+.droite .nom {
+  color: #aaa;
+  font-size: 14px;
+}
+
+/* mise en page */
+.page {
+  max-width: 900px;
+  margin: 30px auto;
+  padding: 0 20px;
+}
 .carte {
   max-width: 380px;
   margin: 60px auto;
@@ -13,45 +57,136 @@ body {
   border-radius: 10px;
   box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
 }
+.bloc {
+  background: white;
+  border-radius: 10px;
+  padding: 20px;
+  margin-bottom: 14px;
+  box-shadow: 0 1px 6px rgba(0, 0, 0, 0.06);
+}
+.ligne-bloc {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 14px;
+  flex-wrap: wrap;
+  background: white;
+  border-radius: 10px;
+  padding: 16px 20px;
+  margin-bottom: 10px;
+  box-shadow: 0 1px 6px rgba(0, 0, 0, 0.06);
+}
+.ligne-bloc.inactif {
+  opacity: 0.5;
+}
+.grille {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: 14px;
+}
 
 h1 {
   margin-top: 0;
   font-size: 26px;
 }
+h2 {
+  font-size: 18px;
+  margin-top: 24px;
+}
+.bloc h2 {
+  margin-top: 0;
+}
+p {
+  margin: 0 0 6px;
+}
 
+/* formulaires */
 label {
   display: block;
-  margin-top: 14px;
+  margin-top: 12px;
   margin-bottom: 4px;
   font-size: 14px;
   color: #666;
 }
-
-input {
+input, select {
   width: 100%;
   padding: 10px;
   border: 1px solid #ddd;
   border-radius: 6px;
   font-size: 15px;
   box-sizing: border-box;
+  background: white;
+}
+.formulaire-ligne {
+  display: flex;
+  align-items: flex-end;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+.formulaire-ligne > div {
+  flex: 1;
+  min-width: 150px;
+}
+.formulaire-ligne button {
+  width: auto;
+  margin-top: 0;
+}
+.actions {
+  display: flex;
+  gap: 8px;
+}
+.actions select {
+  width: auto;
+}
+.actions button {
+  width: auto;
+  margin-top: 0;
 }
 
-button {
+/* boutons */
+button, .bouton {
+  display: inline-block;
   width: 100%;
   margin-top: 20px;
-  padding: 12px;
+  padding: 11px 18px;
   background: #b5651d;
   color: white;
   border: none;
   border-radius: 6px;
   font-size: 15px;
   cursor: pointer;
+  text-decoration: none;
+  text-align: center;
+  box-sizing: border-box;
 }
-
-button:hover {
+button:hover, .bouton:hover {
   background: #9c561a;
 }
+.ligne-bloc button {
+  width: auto;
+  margin-top: 0;
+}
+.bloc.centre button {
+  margin-top: 10px;
+}
+button.secondaire {
+  background: white;
+  color: #666;
+  border: 1px solid #ddd;
+}
+button.secondaire:hover {
+  background: #f4f1ec;
+}
+button.lien {
+  width: auto;
+  margin: 0;
+  padding: 0;
+  background: none;
+  color: #b5651d;
+  font-size: 14px;
+}
 
+/* textes */
 .erreur {
   background: #fbeae7;
   color: #a33a2a;
@@ -59,14 +194,47 @@ button:hover {
   border-radius: 6px;
   font-size: 14px;
 }
-
+.vide {
+  color: #888;
+  font-style: italic;
+}
+.gris {
+  color: #888;
+  font-size: 14px;
+}
+.date {
+  font-weight: bold;
+}
+.note {
+  color: #b5651d;
+  font-weight: bold;
+}
+.note.grande {
+  font-size: 26px;
+}
+.prix {
+  color: #b5651d;
+  font-weight: bold;
+}
+.etiquette {
+  display: inline-block;
+  margin-left: 8px;
+  padding: 2px 8px;
+  background: #eee;
+  color: #666;
+  border-radius: 4px;
+  font-size: 12px;
+}
+.etiquette.orange {
+  background: #b5651d;
+  color: white;
+  margin-left: 0;
+}
 .petit {
   margin-top: 18px;
   font-size: 14px;
   text-align: center;
 }
-
 .centre {
   text-align: center;
-  margin-top: 60px;
 }
