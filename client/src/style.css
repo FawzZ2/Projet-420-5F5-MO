@@ -5,7 +5,6 @@ body {
   color: #2b2b2b;
 }
 
-/* barre du haut */
 .entete {
   display: flex;
   align-items: center;
@@ -43,7 +42,7 @@ body {
   font-size: 14px;
 }
 
-/* mise en page */
+
 .page {
   max-width: 900px;
   margin: 30px auto;
@@ -142,6 +141,10 @@ input, select {
   width: auto;
   margin-top: 0;
 }
+.actions input {
+  width: auto;
+  min-width: 120px;
+}
 
 /* boutons */
 button, .bouton {
@@ -237,4 +240,11 @@ button.lien {
 }
 .centre {
   text-align: center;
+}
+
+.succes {
+  background: #e8f5e9;
+  color: #2e7d32;
+  padding: 10px;
+  border-radius: 6px;
 }

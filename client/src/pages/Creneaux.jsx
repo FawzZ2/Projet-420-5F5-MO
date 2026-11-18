@@ -11,7 +11,7 @@ export default function Creneaux() {
   const [creneaux, setCreneaux] = useState([]);
   const [erreur, setErreur] = useState("");
 
-  // charger les services une seule fois
+  
   useEffect(() => {
     api.get("/client/services").then(setServices).catch((err) => setErreur(err.message));
   }, []);

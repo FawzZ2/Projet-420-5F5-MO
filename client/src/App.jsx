@@ -8,6 +8,11 @@ import Inscription from "./pages/Inscription.jsx";
 import Barbiers from "./pages/Barbiers.jsx";
 import Creneaux from "./pages/Creneaux.jsx";
 import MesRendezVous from "./pages/MesRendezVous.jsx";
+import Horaire from "./pages/Horaire.jsx";
+import Disponibilites from "./pages/Disponibilites.jsx";
+import Evaluations from "./pages/Evaluations.jsx";
+import AdminBarbiers from "./pages/AdminBarbiers.jsx";
+import AdminServices from "./pages/AdminServices.jsx";
 
 export default function App() {
   const [utilisateur, setUtilisateur] = useState(null);
@@ -36,7 +41,8 @@ export default function App() {
   function Depart() {
     if (!utilisateur) return <Navigate to="/connexion" />;
     if (utilisateur.role === "client") return <Navigate to="/barbiers" />;
-    return <p className="centre">Espace {utilisateur.role} en construction.</p>;
+    if (utilisateur.role === "barbier") return <Navigate to="/horaire" />;
+    return <Navigate to="/admin/barbiers" />;
   }
 
   return (
@@ -52,6 +58,15 @@ export default function App() {
           <Route path="/barbiers" element={<Protegee role="client"><Barbiers /></Protegee>} />
           <Route path="/barbier/:id" element={<Protegee role="client"><Creneaux /></Protegee>} />
           <Route path="/mes-rendezvous" element={<Protegee role="client"><MesRendezVous /></Protegee>} />
+
+          {/* barbier */}
+          <Route path="/horaire" element={<Protegee role="barbier"><Horaire /></Protegee>} />
+          <Route path="/disponibilites" element={<Protegee role="barbier"><Disponibilites /></Protegee>} />
+          <Route path="/evaluations" element={<Protegee role="barbier"><Evaluations /></Protegee>} />
+
+          {/* admin */}
+          <Route path="/admin/barbiers" element={<Protegee role="admin"><AdminBarbiers /></Protegee>} />
+          <Route path="/admin/services" element={<Protegee role="admin"><AdminServices /></Protegee>} />
 
           <Route path="*" element={<p className="centre">Page introuvable.</p>} />
         </Routes>

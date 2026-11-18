@@ -1,7 +1,7 @@
 import { Link, useNavigate } from "react-router-dom";
 import { api } from "../api";
 
-// barre du haut
+
 export default function Entete({ utilisateur, setUtilisateur }) {
   const navigate = useNavigate();
 
@@ -22,6 +22,19 @@ export default function Entete({ utilisateur, setUtilisateur }) {
               <>
                 <Link to="/barbiers">Barbiers</Link>
                 <Link to="/mes-rendezvous">Mes rendez-vous</Link>
+              </>
+            )}
+            {utilisateur.role === "barbier" && (
+              <>
+                <Link to="/horaire">Mon horaire</Link>
+                <Link to="/disponibilites">Mes disponibilites</Link>
+                <Link to="/evaluations">Mes evaluations</Link>
+              </>
+            )}
+            {utilisateur.role === "admin" && (
+              <>
+                <Link to="/admin/barbiers">Barbiers</Link>
+                <Link to="/admin/services">Services</Link>
               </>
             )}
           </nav>

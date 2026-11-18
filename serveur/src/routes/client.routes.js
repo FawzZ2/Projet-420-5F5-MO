@@ -80,12 +80,24 @@ router.post("/reserver", async (req, res) => {
   try {
     await connexion.beginTransaction();
 
-    const [plages] = await connexion.query(
-      "SELECT id, barbier_id, est_reserve FROM disponibilites WHERE id = ? FOR UPDATE",
-      [disponibilite_id]
-    );
+    // on revérifie ici que la plage est dans le futur et assez longue pour le service
+    // la liste des creneaux le filtre deja, mais quelqu'un pourrait appeler l'api directement
+    const [plages] = await connexion.query(`
+      SELECT d.id, d.barbier_id, d.est_reserve
+      FROM disponibilites d
+      JOIN services s ON s.id = ?
+      WHERE d.id = ?
+        AND d.debut > NOW()
+        AND TIMESTAMPDIFF(MINUTE, d.debut, d.fin) >= s.duree_min
+      FOR UPDATE
+    `, [service_id, disponibilite_id]);
 
-    if (plages.length === 0 || plages[0].est_reserve === 1) {
+    if (plages.length === 0) {
+      await connexion.rollback();
+      return res.status(400).json({ erreur: "Ce creneau n'est pas valide pour ce service." });
+    }
+
+    if (plages[0].est_reserve === 1) {
       await connexion.rollback();
       return res.status(409).json({ erreur: "Ce creneau vient d'etre reserve. Choisissez-en un autre." });
     }
@@ -117,11 +129,13 @@ router.get("/rendezvous", async (req, res) => {
   try {
     const [rows] = await db.query(`
       SELECT r.id, r.statut, d.debut, d.fin,
-             u.nom AS barbier, s.nom AS service, s.prix
+             u.nom AS barbier, s.nom AS service, s.prix,
+             a.note AS ma_note
       FROM rendezvous r
       JOIN disponibilites d ON d.id = r.disponibilites_id
       JOIN utilisateurs u ON u.id = r.barbier_id
       JOIN services s ON s.id = r.services_id
+      LEFT JOIN avis a ON a.rendezvous_id = r.id
       WHERE r.client_id = ?
       ORDER BY d.debut DESC
     `, [clientId]);
@@ -141,15 +155,17 @@ router.post("/annuler/:id", async (req, res) => {
   try {
     await connexion.beginTransaction();
 
-    // on verifie que le rendez-vous appartient bien a ce client
-    const [rows] = await connexion.query(
-      "SELECT id, disponibilites_id FROM rendezvous WHERE id = ? AND client_id = ? AND statut = 'confirme'",
-      [req.params.id, clientId]
-    );
+    // on verifie que le rendez-vous appartient bien a ce client et qu'il est pas deja passe
+    const [rows] = await connexion.query(`
+      SELECT r.id, r.disponibilites_id
+      FROM rendezvous r
+      JOIN disponibilites d ON d.id = r.disponibilites_id
+      WHERE r.id = ? AND r.client_id = ? AND r.statut = 'confirme' AND d.debut > NOW()
+    `, [req.params.id, clientId]);
 
     if (rows.length === 0) {
       await connexion.rollback();
-      return res.status(404).json({ erreur: "Rendez-vous introuvable." });
+      return res.status(404).json({ erreur: "Rendez-vous introuvable ou deja passe." });
     }
 
     await connexion.query("UPDATE rendezvous SET statut = 'annule' WHERE id = ?", [rows[0].id]);
@@ -162,6 +178,44 @@ router.post("/annuler/:id", async (req, res) => {
     res.status(500).json({ erreur: err.message });
   } finally {
     connexion.release();
+  }
+});
+
+// evaluer le barbier apres un rendez-vous
+// regle d'affaires : seulement si le rendez-vous est termine, et une seule fois
+// le "une seule fois" est garanti par la contrainte UNIQUE sur avis.rendezvous_id
+router.post("/evaluer/:id", async (req, res) => {
+  const clientId = req.session.utilisateur.id;
+  const note = parseInt(req.body.note, 10);
+  const commentaire = req.body.commentaire || null;
+
+  if (!(note >= 1 && note <= 5)) {
+    return res.status(400).json({ erreur: "La note doit etre entre 1 et 5." });
+  }
+
+  try {
+    const [rows] = await db.query(`
+      SELECT r.id
+      FROM rendezvous r
+      JOIN disponibilites d ON d.id = r.disponibilites_id
+      WHERE r.id = ? AND r.client_id = ? AND r.statut <> 'annule' AND d.fin < NOW()
+    `, [req.params.id, clientId]);
+
+    if (rows.length === 0) {
+      return res.status(400).json({ erreur: "On peut seulement evaluer un rendez-vous termine." });
+    }
+
+    await db.query(
+      "INSERT INTO avis (note, commentaire, client_id, rendezvous_id) VALUES (?, ?, ?, ?)",
+      [note, commentaire, clientId, req.params.id]
+    );
+    res.json({ ok: true });
+  } catch (err) {
+    // la contrainte UNIQUE a bloque un 2e avis pour le meme rendez-vous
+    if (err.code === "ER_DUP_ENTRY") {
+      return res.status(409).json({ erreur: "Vous avez deja evalue ce rendez-vous." });
+    }
+    res.status(500).json({ erreur: err.message });
   }
 });
 

@@ -24,6 +24,8 @@ app.use(session({
 // routes
 app.use("/api", require("./routes/auth.routes"));
 app.use("/api/client", require("./routes/client.routes"));
+app.use("/api/barbier", require("./routes/barbier.routes"));
+app.use("/api/admin", require("./routes/admin.routes"));
 
 // route pour tester si la bd marche
 app.get("/api/test", async (req, res) => {
