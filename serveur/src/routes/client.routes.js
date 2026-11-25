@@ -28,6 +28,42 @@ router.get("/barbiers", async (req, res) => {
   }
 });
 
+// les avis laisses par les clients sur un barbier
+// on montre seulement le prenom du client (pas son nom complet ni son courriel)
+router.get("/barbiers/:id/avis", async (req, res) => {
+  try {
+    const [barbiers] = await db.query(
+      "SELECT id, nom FROM utilisateurs WHERE id = ? AND role = 'barbier' AND actif = 1",
+      [req.params.id]
+    );
+    if (barbiers.length === 0) {
+      return res.status(404).json({ erreur: "Barbier introuvable." });
+    }
+
+    const [avis] = await db.query(`
+      SELECT a.id, a.note, a.commentaire, a.date_avis,
+             s.nom AS service,
+             SUBSTRING_INDEX(c.nom, ' ', 1) AS client
+      FROM avis a
+      JOIN rendezvous r ON r.id = a.rendezvous_id
+      JOIN services s ON s.id = r.services_id
+      JOIN utilisateurs c ON c.id = a.client_id
+      WHERE r.barbier_id = ?
+      ORDER BY a.date_avis DESC
+    `, [req.params.id]);
+
+    let moyenne = null;
+    if (avis.length > 0) {
+      const total = avis.reduce((somme, a) => somme + a.note, 0);
+      moyenne = (total / avis.length).toFixed(1);
+    }
+
+    res.json({ barbier: barbiers[0], moyenne, avis });
+  } catch (err) {
+    res.status(500).json({ erreur: err.message });
+  }
+});
+
 // liste des services du salon
 router.get("/services", async (req, res) => {
   try {

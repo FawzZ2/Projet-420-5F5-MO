@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { api } from "../api";
+import { initiales } from "../format";
 
 export default function AdminBarbiers() {
   const [barbiers, setBarbiers] = useState([]);
@@ -64,7 +65,10 @@ export default function AdminBarbiers() {
 
   return (
     <div className="page">
-      <h1>Gestion des barbiers</h1>
+      <div className="entete-page">
+        <p className="surtitre">Administration</p>
+        <h1>Gestion des barbiers</h1>
+      </div>
       {erreur && <p className="erreur">{erreur}</p>}
 
       <div className="bloc">
@@ -82,11 +86,11 @@ export default function AdminBarbiers() {
             <label>Mot de passe</label>
             <input type="password" value={password} minLength={8} onChange={(e) => setPassword(e.target.value)} required />
           </div>
-          <button type="submit">Ajouter</button>
+          <button type="submit">Ajouter le barbier</button>
         </form>
       </div>
 
-      <h2>Equipe du salon</h2>
+      <h2 className="titre-section">Équipe du salon <span className="compteur">{barbiers.length}</span></h2>
       {barbiers.map((b) => (
         <div className={"ligne-bloc" + (b.actif ? "" : " inactif")} key={b.id}>
           {enModif === b.id ? (
@@ -102,14 +106,15 @@ export default function AdminBarbiers() {
             </>
           ) : (
             <>
-              <div>
-                <p className="date">{b.nom} {!b.actif && <span className="etiquette">Retire</span>}</p>
+              <span className="avatar">{initiales(b.nom)}</span>
+              <div className="ligne-infos">
+                <p className="date">{b.nom} {!b.actif && <span className="etiquette">Retiré</span>}</p>
                 <p className="gris">{b.courriel}</p>
               </div>
               <div className="actions">
                 {b.actif === 1 && <button className="secondaire" onClick={() => commencerModif(b)}>Modifier</button>}
                 <button className="secondaire" onClick={() => changerEtat(b)}>
-                  {b.actif ? "Retirer" : "Reactiver"}
+                  {b.actif ? "Retirer" : "Réactiver"}
                 </button>
               </div>
             </>

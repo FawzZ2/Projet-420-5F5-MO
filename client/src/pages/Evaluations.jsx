@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { api } from "../api";
+import { ResumeAvis, ListeAvis } from "../composants/Avis.jsx";
 
 export default function Evaluations() {
   const [avis, setAvis] = useState([]);
@@ -17,19 +18,22 @@ export default function Evaluations() {
 
   return (
     <div className="page">
-      <h1>Mes evaluations</h1>
+      <div className="entete-page">
+        <p className="surtitre">Espace barbier</p>
+        <h1>Mes évaluations</h1>
+      </div>
       {erreur && <p className="erreur">{erreur}</p>}
 
       {moyenne
-        ? <p className="note grande">{moyenne} / 5 <span className="gris">sur {avis.length} avis</span></p>
-        : !erreur && <p className="vide">Pas encore d'evaluation.</p>}
+        ? <div className="bloc"><ResumeAvis moyenne={moyenne} avis={avis} /></div>
+        : !erreur && <p className="vide">Pas encore d'évaluation.</p>}
 
-      {avis.map((a) => (
-        <div className="bloc" key={a.id}>
-          <p className="note">{a.note} / 5 <span className="gris">{a.service} - {a.date_avis.substring(0, 10)}</span></p>
-          {a.commentaire && <p>{a.commentaire}</p>}
+      {avis.length > 0 && (
+        <div className="bloc">
+          <h2>Commentaires</h2>
+          <ListeAvis avis={avis} />
         </div>
-      ))}
+      )}
     </div>
   );
 }

@@ -27,7 +27,7 @@ export default function App() {
   }, []);
 
   if (chargement) {
-    return <p className="centre">Chargement...</p>;
+    return <div className="chargeur plein" />;
   }
 
   // bloque l'acces a une page si le role est pas le bon
@@ -68,9 +68,18 @@ export default function App() {
           <Route path="/admin/barbiers" element={<Protegee role="admin"><AdminBarbiers /></Protegee>} />
           <Route path="/admin/services" element={<Protegee role="admin"><AdminServices /></Protegee>} />
 
-          <Route path="*" element={<p className="centre">Page introuvable.</p>} />
+          <Route path="*" element={
+            <div className="page centre introuvable">
+              <p className="surtitre">Erreur 404</p>
+              <h1>Page introuvable</h1>
+              <p className="gris">La page demandée n'existe pas ou a été déplacée.</p>
+            </div>
+          } />
         </Routes>
       </main>
+      <footer className="pied">
+        <p>© {new Date().getFullYear()} BarberBook · Salon de barbier</p>
+      </footer>
     </>
   );
 }

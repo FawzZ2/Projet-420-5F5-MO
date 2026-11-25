@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { api } from "../api";
+import { formatPrix } from "../format";
 
 export default function AdminServices() {
   const [services, setServices] = useState([]);
@@ -61,7 +62,10 @@ export default function AdminServices() {
 
   return (
     <div className="page">
-      <h1>Gestion des services</h1>
+      <div className="entete-page">
+        <p className="surtitre">Administration</p>
+        <h1>Gestion des services</h1>
+      </div>
       {erreur && <p className="erreur">{erreur}</p>}
 
       <div className="bloc">
@@ -72,18 +76,18 @@ export default function AdminServices() {
             <input type="text" value={nom} onChange={(e) => setNom(e.target.value)} required />
           </div>
           <div>
-            <label>Duree (min)</label>
+            <label>Durée (min)</label>
             <input type="number" min="5" step="5" value={duree} onChange={(e) => setDuree(e.target.value)} required />
           </div>
           <div>
             <label>Prix ($)</label>
             <input type="number" min="0" step="0.01" value={prix} onChange={(e) => setPrix(e.target.value)} required />
           </div>
-          <button type="submit">Ajouter</button>
+          <button type="submit">Ajouter le service</button>
         </form>
       </div>
 
-      <h2>Services du salon</h2>
+      <h2 className="titre-section">Services du salon <span className="compteur">{services.length}</span></h2>
       {services.length === 0 && <p className="vide">Aucun service. Les clients ne peuvent pas reserver.</p>}
       {services.map((s) => (
         <div className="ligne-bloc" key={s.id}>
@@ -101,10 +105,11 @@ export default function AdminServices() {
             </>
           ) : (
             <>
-              <div>
+              <div className="ligne-infos">
                 <p className="date">{s.nom}</p>
-                <p className="gris">{s.duree_min} minutes - {s.prix} $</p>
+                <p className="gris">{s.duree_min} minutes</p>
               </div>
+              <span className="prix">{formatPrix(s.prix)}</span>
               <div className="actions">
                 <button className="secondaire" onClick={() => commencerModif(s)}>Modifier</button>
                 <button className="secondaire" onClick={() => retirer(s)}>Retirer</button>

@@ -1,5 +1,7 @@
 import { useState, useEffect } from "react";
 import { api } from "../api";
+import { formatJourLong, formatHeure } from "../format";
+import BadgeDate from "../composants/BadgeDate.jsx";
 
 export default function Disponibilites() {
   const [plages, setPlages] = useState([]);
@@ -39,35 +41,41 @@ export default function Disponibilites() {
 
   return (
     <div className="page">
-      <h1>Mes disponibilites</h1>
+      <div className="entete-page">
+        <p className="surtitre">Espace barbier</p>
+        <h1>Mes disponibilités</h1>
+        <p className="gris">Ouvrez des plages horaires pour que les clients puissent réserver.</p>
+      </div>
       {erreur && <p className="erreur">{erreur}</p>}
 
       <div className="bloc">
         <h2>Ouvrir une plage</h2>
         <form className="formulaire-ligne" onSubmit={ouvrir}>
           <div>
-            <label>Debut</label>
+            <label>Début</label>
             <input type="datetime-local" value={debut} onChange={(e) => setDebut(e.target.value)} required />
           </div>
           <div>
             <label>Fin</label>
             <input type="datetime-local" value={fin} onChange={(e) => setFin(e.target.value)} required />
           </div>
-          <button type="submit">Ouvrir</button>
+          <button type="submit">Ouvrir la plage</button>
         </form>
       </div>
 
-      <h2>Mes plages</h2>
-      {plages.length === 0 && <p className="vide">Aucune plage ouverte. Les clients ne peuvent pas reserver avec vous.</p>}
+      <h2 className="titre-section">Mes plages <span className="compteur">{plages.length}</span></h2>
+      {plages.length === 0 && <p className="vide">Aucune plage ouverte. Les clients ne peuvent pas réserver avec vous.</p>}
       {plages.map((p) => (
         <div className="ligne-bloc" key={p.id}>
-          <div>
-            <p className="date">{p.debut.substring(0, 16)} a {p.fin.substring(11, 16)}</p>
-            {p.est_reserve
-              ? <span className="etiquette orange">Reservee</span>
-              : <span className="gris">Libre</span>}
+          <BadgeDate date={p.debut} />
+          <div className="ligne-infos">
+            <p className="date">{formatJourLong(p.debut)}</p>
+            <p className="gris">{formatHeure(p.debut)} à {formatHeure(p.fin)}</p>
           </div>
-          {!p.est_reserve && <button className="secondaire" onClick={() => retirer(p.id)}>Retirer</button>}
+          {p.est_reserve
+            ? <span className="etiquette accent">Réservée</span>
+            : <span className="etiquette vert">Libre</span>}
+          {!p.est_reserve && <button className="secondaire danger" onClick={() => retirer(p.id)}>Retirer</button>}
         </div>
       ))}
     </div>
