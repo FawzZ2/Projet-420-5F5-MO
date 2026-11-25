@@ -40,3 +40,20 @@ INSERT INTO rendezvous (statut, client_id, barbier_id, services_id, disponibilit
 INSERT INTO avis (note, commentaire, client_id, rendezvous_id) VALUES
 (5, 'Tres bon degrade, je reviens c est sur', 4, 2),
 (4, 'Bonne barbe, un peu d attente', 4, 3);
+
+
+-- Horaire de la semaine des barbiers (0 = dimanche ... 6 = samedi)
+-- Marc travaille du mardi au samedi, 9 h a 17 h, creneaux de 1 h
+-- Sofiane travaille du lundi au vendredi, 10 h a 18 h, creneaux de 45 min
+-- les creneaux sont crees automatiquement quand quelqu'un ouvre la page
+INSERT INTO horaires (barbier_id, jour, heure_debut, heure_fin, duree_creneau) VALUES
+(2, 2, '09:00', '17:00', 60),
+(2, 3, '09:00', '17:00', 60),
+(2, 4, '09:00', '17:00', 60),
+(2, 5, '09:00', '17:00', 60),
+(2, 6, '09:00', '17:00', 60),
+(3, 1, '10:00', '18:00', 45),
+(3, 2, '10:00', '18:00', 45),
+(3, 3, '10:00', '18:00', 45),
+(3, 4, '10:00', '18:00', 45),
+(3, 5, '10:00', '18:00', 45);

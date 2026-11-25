@@ -102,6 +102,13 @@ router.post("/barbiers/:id/retirer", async (req, res) => {
       "UPDATE utilisateurs SET actif = 0 WHERE id = ? AND role = 'barbier'",
       [req.params.id]
     );
+    // meme chose que quand le barbier retire une plage : on enleve d'abord les rendez-vous annules
+    // qui pointent sur ces plages, sinon la cle etrangere bloque le DELETE
+    await connexion.query(`
+      DELETE r FROM rendezvous r
+      JOIN disponibilites d ON d.id = r.disponibilites_id
+      WHERE d.barbier_id = ? AND d.est_reserve = 0 AND d.debut > NOW() AND r.statut = 'annule'
+    `, [req.params.id]);
     await connexion.query(
       "DELETE FROM disponibilites WHERE barbier_id = ? AND est_reserve = 0 AND debut > NOW()",
       [req.params.id]
@@ -120,7 +127,8 @@ router.post("/barbiers/:id/retirer", async (req, res) => {
 // remettre un barbier retire
 router.post("/barbiers/:id/reactiver", async (req, res) => {
   try {
-    await db.query("UPDATE utilisateurs SET actif = 1 WHERE id = ? AND role = 'barbier'", [req.params.id]);
+    // plages_jusqua a NULL : ses creneaux seront recrees a partir de son horaire
+    await db.query("UPDATE utilisateurs SET actif = 1, plages_jusqua = NULL WHERE id = ? AND role = 'barbier'", [req.params.id]);
     res.json({ ok: true });
   } catch (err) {
     res.status(500).json({ erreur: err.message });

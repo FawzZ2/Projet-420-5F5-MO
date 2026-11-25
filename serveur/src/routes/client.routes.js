@@ -1,6 +1,7 @@
 const express = require("express");
 const db = require("../db");
 const { aRole } = require("../middleware/auth");
+const { genererPlages } = require("../plages");
 
 const router = express.Router();
 
@@ -85,6 +86,9 @@ router.get("/creneaux", async (req, res) => {
   }
 
   try {
+    // on s'assure que les creneaux des 4 prochaines semaines existent selon l'horaire du barbier
+    await genererPlages(barbier);
+
     const [rows] = await db.query(`
       SELECT d.id, d.debut, d.fin
       FROM disponibilites d

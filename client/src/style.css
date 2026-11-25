@@ -716,3 +716,67 @@ button.secondaire.danger:hover { background: var(--danger-pale); border-color: #
   .resume-avis { grid-template-columns: 1fr; gap: 16px; }
   .fenetre-tete, .fenetre-corps, .fenetre-pied { padding-left: 18px; padding-right: 18px; }
 }
+
+/* ---------- horaire de la semaine (barbier) ---------- */
+.semaine { display: flex; flex-direction: column; gap: 8px; margin-bottom: 18px; }
+.semaine-ligne {
+  display: grid;
+  grid-template-columns: 160px 1fr 1fr;
+  gap: 12px;
+  align-items: center;
+  padding: 8px 12px;
+  border-radius: var(--rayon-petit);
+  background: var(--fond);
+}
+.semaine-ligne input[type="time"] { height: 40px; }
+.semaine-ligne.repos { background: transparent; border: 1px dashed var(--ligne); }
+.semaine-jour {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin: 0;
+  font-size: 15px;
+  cursor: pointer;
+}
+.semaine-jour input { width: 18px; height: 18px; margin: 0; accent-color: var(--accent); cursor: pointer; }
+.semaine-repos { grid-column: 2 / -1; }
+.aide { margin-top: 12px; }
+
+.deux-blocs { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+.deux-blocs .bloc { margin-bottom: 0; }
+.deux-blocs + .titre-section { margin-top: 32px; }
+
+.plage {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  height: 36px;
+  padding: 0 6px 0 14px;
+  border: 1.5px solid var(--ligne);
+  border-radius: var(--rayon-petit);
+  background: var(--surface);
+  color: var(--encre);
+  font-size: 14px;
+  font-weight: 600;
+}
+.plage.reservee { padding-right: 14px; border-color: transparent; background: var(--accent-pale); color: var(--accent-fonce); }
+.plage button {
+  width: 24px;
+  height: 24px;
+  margin: 0;
+  padding: 0;
+  border: none;
+  border-radius: 50%;
+  background: transparent;
+  color: var(--doux);
+  font-size: 17px;
+  line-height: 1;
+}
+.plage button:hover { background: var(--danger-pale); color: var(--danger); }
+
+@media (max-width: 760px) {
+  .deux-blocs { grid-template-columns: 1fr; }
+  .deux-blocs .bloc { margin-bottom: 16px; }
+  .semaine-ligne { grid-template-columns: 1fr 1fr; }
+  .semaine-jour { grid-column: 1 / -1; }
+}
